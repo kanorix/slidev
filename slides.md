@@ -1,40 +1,24 @@
 ---
-# You can also start simply with 'default'
 theme: default
-# random image from a curated Unsplash collection by Anthony
-# like them? see https://unsplash.com/collections/94734566/slidev
 background: layouts/images/sky.jpeg
-# some information about your slides (markdown enabled)
-title: Welcome to Slidev
-info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
-# apply unocss classes to the current slide
+title: GitHub Actionsについて
+author: kanorix
 class: text-center
-# https://sli.dev/features/drawing
 drawings:
   persist: false
-# slide transition: https://sli.dev/guide/animations.html#slide-transitions
 transition: fade-out
-# enable MDC Syntax: https://sli.dev/features/mdc
 mdc: true
-# take snapshot for each slide in the overview
 overviewSnapshots: true
 fonts:
-  # basically the text
   sans: M PLUS Rounded 1c
-  # use with `font-serif` css class from UnoCSS
   serif: BIZ UDPMincho
-  # for code blocks, inline code, etc.
   mono: M PLUS 1 Code
 hideInToc: true
 ---
 
-# rebaseについて
+# CI/CDについて
 
-2024/10/16
+2024/10/23
 
 ---
 hideInToc: true
@@ -48,245 +32,207 @@ image: layouts/images/sky.jpeg
 
 ---
 
-# Q. 問題！
+<style>
+p {
+   opacity: 1 !important
+}
+h2 {
+   --uno: 'text-blue';
+}
+strong {
+   --uno: 'text-red text-2xl';
+   line-height: 1.5;
+}
+blockquote {
+   p {
+      --uno: 'text-size-2xl';
+      line-height: 2rem;
+   }
+   strong {
+      --uno: 'text-red text-3xl';
+      line-height: 2;
+   }
+}
+</style>
 
-### Gitのブランチの変更を、
-### 別ブランチに統合する方法は大きく2つあります！
-### 何と何でしょうか！
+# 目的
 
-<div class="py-8" />
+- CI/CDに興味を持ってもらう
+   - CI/CDなんとなく理解した！
+   - なんかすごそう！
+   - ちょっと触ってみようかな？
 
-#### ブランチ
-```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   branch develop
-   switch develop
-   commit id: "D"
-   commit id: "E"
-   switch main
-   commit id: "F"
-```
+---
+layout: center
+hideInToc: true
+---
 
-
+# 自動化で「楽」しようぜ！！
 
 ---
 
-# A. 答え！
+# CI/CD ？
 
-## `merge` と `rebase` です！
+## 継続的インテグレーション（CI）
 
-`rebase`はと**あるブランチ**を**別のブランチ**に統合する方法の１つ
+**ソースコードに変更をするたび**に自動でソフトウェアのビルドとテストを行う<br>
+**ソフトウェア開発の手法**のこと
 
-<div class="py-8" />
 
-#### ブランチ
 ```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   branch develop
-   switch develop
-   commit id: "D"
-   commit id: "E"
-   switch main
-   commit id: "F"
+stateDiagram
+  direction LR
+  s1 : コミット
+  s2 : ビルド
+  s3 : テスト
+  [*] --> s1
+  s1 --> s2
+  s2 --> s3
 ```
 
+<div class="m-6" />
+
+## 継続デリバリー（CD）
+
+アプリケーションを**いつでもデプロイできる状態にする**こと<br>
+（デプロイは通常、手動で行う必要がある）
+
+```mermaid
+stateDiagram
+  direction LR
+  s1 : コミット
+  s2 : ビルド
+  s3 : テスト
+  s4 : リリース可能！
+  [*] --> s1
+  s1 --> s2
+  s2 --> s3
+  s3 --> s4
+```
 
 ---
+hideInToc: true
+---
 
-# ブランチ統合方法の違い
+## 継続デプロイメント (CD)
 
-<div class="flex">
- <div class="basis-1/2 bg-emerald m-2 p-2">
+ソースコードのビルドからテスト、デプロイメントまでを**すべて自動**で行う
 
 ```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   branch develop
-   switch develop
-   commit id: "D"
-   commit id: "E"
-   switch main
-   commit id: "F"
+stateDiagram
+  direction LR
+  s1 : コミット
+  s2 : ビルド
+  s3 : テスト
+  s4 : リリース可能！
+  s5 : デプロイ
+  [*] --> s1
+  s1 --> s2
+  s2 --> s3
+  s3 --> s4
+  s4 --> s5
 ```
 
- </div>
- <div class="basis-1/2">
- 
+<img src="http://cloudbees.techmatrix.jp/wp-content/uploads/2021/09/cb_jenkins_img7_850.png" width="600px" />
+https://cloudbees.techmatrix.jp/devops/cd/
 
-最終的な結果は同じで<br>
-developにA〜Eまでが取り込まれた形になる
+---
+hideInToc: true
+---
 
- </div>
+# CIの目的
+
+[AWS | 継続的インテグレーションとは?](https://aws.amazon.com/jp/devops/continuous-integration/)
+
+- バグを早期に発見して対処すること
+- ソフトウェアの品質を高めること
+- ソフトウェアの更新を検証してリリースするためにかかる時間を短縮すること
+
+<div class="m-8" />
+
+簡単にいうと
+
+> 変更するたびに**自動でビルドとテスト**を行い、<br>
+> **品質の高いソフトウェア**を担保する！
+
+<style>
+a {
+  opacity: 0.5;
+}
+</style>
+
+---
+layout: center
+---
+
+じゃあどうやって実現するの？
+
+<style>
+p {
+  --uno: 'text-3xl';
+}
+</style>
+---
+layout: two-cols-header
+---
+
+# CI/CDのツール
+
+::left::
+
+- コード管理サービスが提供するサービス
+   - GitHub Actions
+   - GitLab CI/CD
+   - Bitbucket Pipelines
+
+- CI/CDのサービス(ソフトウェア)
+   - Circle CI
+   - Travis CI
+   - Jenkins
+
+::right::
+
+<div class="grid grid-cols-2 h-100 grid-items-center">
+
+<img src="./assets/image-gha.png" width="200px" />
+<img src="./assets/image-circleci.png" width="200px" />
+<img src="./assets/image-gitlabci.png" width="200px" />
+<img src="./assets/image-travisci.png" width="200px" />
+<img src="./assets/image-bitbucket.png" width="200px" />
+<img src="./assets/image-jenkins.png" width="200px" />
+
 </div>
 
-<div class="py-4" />
-
-#### developにmainを取り込む
-
-<div class="flex">
- <div class="basis-1/2">
-
-#### `merge`
-
-```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   branch develop
-   switch develop
-   commit id: "D"
-   commit id: "E"
-   switch main
-   commit id: "F"
-   switch develop
-   merge main
-```
-
- </div>
- <div class="basis-1/2">
- 
-
-#### `rebase`
-
-```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   commit id: "F"
-   branch develop
-   switch develop
-   commit id: "D+"
-   commit id: "E+"
-```
-
- </div>
-</div>
-
 ---
-
-# rebaseとは
-
-gitのコマンドの１つで、[公式ドキュメント](https://git-scm.com/docs/git-rebase)では
-
-> git-rebase - Reapply commits on top of another base tip
->
-> (git-rebase - 別のベースチップの上にコミットを再適用する)
-
-と記載がある。
-
-言い換えると、`rebase`は「ブランチを切った地点」をずらすことで、ブランチに統合する方法の１つ
-
-<div class="flex">
- <div class="basis-1/2">
- 
-```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   branch develop
-   switch develop
-   commit id: "D"
-   commit id: "E"
-   switch main
-   commit id: "F"
-```
-
- </div>
- <div class="basis-1/2">
- 
-```mermaid
-gitGraph
-   commit id: "A"
-   commit id: "B"
-   commit id: "C"
-   commit id: "F"
-   branch develop
-   switch develop
-   commit id: "D+"
-   commit id: "E+"
-```
-
- </div>
-</div>
-
-- developはmainの「C」からブランチを作成した
-- rebaseすることでmainの最新コミットである「F」からブランチが作成されたように変更される
-
----
-
-# rebaseでできること
-
-`rebase`ではベースとして変更されたところから「コミットを作成し直す」
-
-→ つまり、「**歴史改変**」ができるコマンド
-
-→→ そのタイミングでコミットをあれこれしちゃおうぜ！ができる
-
-### つまり
-
-## 過去のコミットを「修正」するだけでなく、
-## 「まとめ」たり「削除」したり、
-## 「順番を入れ替え」たりできる！
-
----
-
-# (紹介) 対話的なrebase
-
-rebaseコマンドに`-i`オプション（`--interactive`）を付与する
-
-#### 以下の操作ができる
-
-- d, drop = commit削除
-- x, exec = シェルを使用してコマンド実行
-- f, fixup = 前のコミットにまとめる（コミットメッセージはまとめる先を使う）
-- s, squash = 前のコミットにまとめる（コミットメッセージを入力する必要がある）
-- e, edit = コミットを編集する
-- r, reword = コミットメッセージのみ修正する
-- p, pick = コミットを使用する（初期状態）
-
----
-
-# rebaseの注意点
-
-#### プッシュしたコミットをリベースしてはいけない
-
-「歴史を書き換える」ため、push後にしてしまうと消える歴史が発生する可能性がある！<br>
-自分のみのブランチであれば問題はないが、他の人が関わるブランチでは基本的に❌
-
-（PJによってはOKなところもあるっぽいので一概には言えませんが…。）
-
-gitの[公式ドキュメント](https://git-scm.com/book/ja/v2/Git-%e3%81%ae%e3%83%96%e3%83%a9%e3%83%b3%e3%83%81%e6%a9%9f%e8%83%bd-%e3%83%aa%e3%83%99%e3%83%bc%e3%82%b9#r_pre_merge_rebase_work)では
-
-> この指針に従っている限り、すべてはうまく進みます。 
-> 
-> もしこれを守らなければ、あなたは嫌われ者となり、友人や家族からも軽蔑されることになるでしょう。
-
-と記載されています😭
-
----
-layout: image-right
+layout: image
 image: layouts/images/sky.jpeg
 ---
 
 # まとめ
 
-- `rebase`とは**あるブランチ**を**別のブランチ**に統合する方法の１つ
-  - 言い換えると「ブランチを切った地点」をずらして統合する
-- `rebase`は歴史改変コマンドの１つ
-  - コミットを作り直す際にあれこれできる
-    - コミットを削除したり…
-    - コミットを編集したり…
-    - コミットをまとめてみたり…
-- `rebase`は注意して使おう
-  - 無闇に使用するとリポジトリや他の人の作業を破壊する恐れがある
+- 継続的インテグレーション（CI）
+   - **変更のたび**に自動でビルドとテストを行う手法
+- 継続デリバリー（CD）
+   - アプリケーションを<br>**いつでもデプロイできる**状態にすること
+- CI/CDを整備することで、コードが変更するたびに<br>**自動でビルドとテスト**を行い、<br>**品質の高いソフトウェア**を担保する！
+
+---
+
+# 次回(予定)
+
+- GitHub Actionsについて
+  - 実際にどうやって定義するのか
+
+
+<!-- ---
+layout: quote
+
+# GitHub Actionsとは
+
+> GitHub Actions は、 <br>
+> ビルド、テスト、デプロイのパイプラインを<br>
+> 自動化できる<br>
+> **継続的インテグレーション** と **継続的デリバリー**  (CI/CD) <br>
+> のプラットフォームです。
+
+[GitHub Docs | GitHub Actions を理解する](https://docs.github.com/ja/actions/about-github-actions/understanding-github-actions) -->
