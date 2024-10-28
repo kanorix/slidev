@@ -16,9 +16,9 @@ fonts:
 hideInToc: true
 ---
 
-# CI/CDについて
+# GitHub Actionsについて
 
-2024/10/23
+2024/10/29
 
 ---
 hideInToc: true
@@ -40,7 +40,8 @@ h2 {
    --uno: 'text-blue';
 }
 strong {
-   --uno: 'text-red text-2xl';
+   --uno: 'text-red';
+   font-size: 1.2em;
    line-height: 1.5;
 }
 blockquote {
@@ -53,175 +54,218 @@ blockquote {
       line-height: 2;
    }
 }
-</style>
-
-# 目的
-
-- CI/CDに興味を持ってもらう
-   - CI/CDなんとなく理解した！
-   - なんかすごそう！
-   - ちょっと触ってみようかな？
-
----
-layout: center
-hideInToc: true
----
-
-# 自動化で「楽」しようぜ！！
-
----
-
-# CI/CD ？
-
-## 継続的インテグレーション（CI）
-
-**ソースコードに変更をするたび**に自動でソフトウェアのビルドとテストを行う<br>
-**ソフトウェア開発の手法**のこと
-
-
-```mermaid
-stateDiagram
-  direction LR
-  s1 : コミット
-  s2 : ビルド
-  s3 : テスト
-  [*] --> s1
-  s1 --> s2
-  s2 --> s3
-```
-
-<div class="m-6" />
-
-## 継続デリバリー（CD）
-
-アプリケーションを**いつでもデプロイできる状態にする**こと<br>
-（デプロイは通常、手動で行う必要がある）
-
-```mermaid
-stateDiagram
-  direction LR
-  s1 : コミット
-  s2 : ビルド
-  s3 : テスト
-  s4 : リリース可能！
-  [*] --> s1
-  s1 --> s2
-  s2 --> s3
-  s3 --> s4
-```
-
----
-hideInToc: true
----
-
-## 継続デプロイメント (CD)
-
-ソースコードのビルドからテスト、デプロイメントまでを**すべて自動**で行う
-
-```mermaid
-stateDiagram
-  direction LR
-  s1 : コミット
-  s2 : ビルド
-  s3 : テスト
-  s4 : リリース可能！
-  s5 : デプロイ
-  [*] --> s1
-  s1 --> s2
-  s2 --> s3
-  s3 --> s4
-  s4 --> s5
-```
-
-<img src="http://cloudbees.techmatrix.jp/wp-content/uploads/2021/09/cb_jenkins_img7_850.png" width="600px" />
-https://cloudbees.techmatrix.jp/devops/cd/
-
----
-hideInToc: true
----
-
-# CIの目的
-
-[AWS | 継続的インテグレーションとは?](https://aws.amazon.com/jp/devops/continuous-integration/)
-
-- バグを早期に発見して対処すること
-- ソフトウェアの品質を高めること
-- ソフトウェアの更新を検証してリリースするためにかかる時間を短縮すること
-
-<div class="m-8" />
-
-簡単にいうと
-
-> 変更するたびに**自動でビルドとテスト**を行い、<br>
-> **品質の高いソフトウェア**を担保する！
-
-<style>
-a {
-  opacity: 0.5;
+ul {
+   font-size: 1.2em;
+   li ul {
+      font-size: 0.8em;
+   }
 }
 </style>
 
----
-layout: center
+
+# GitHub Actionsの知識(キーワード1/2)
+
+<div class="flex">
+<div class="basis-1/2 m-2 p-2">
+
+- イベント
+   - ワークフローを開始する条件
+      - push, merge, schedule, dispatch
+- ワークフロー
+   - 1つ以上のジョブをまとめたもの
+   - **1ファイル、1ワークフロー**
+- ジョブ
+   - 並列で実行される（依存が指定できる）
+   - **ランナー**を指定できる
+- ステップ
+   - ジョブで実行される最小単位
+   - **シェルスクリプト**か**アクション**
+
+</div>
+<div class="basis-1/2 m-2 p-2">
+
+```mermaid
+flowchart TD
+  subgraph workflow["ワークフロー (xxx.yaml)"]
+    direction LR
+    subgraph Job2["ジョブ (Runner: ubuntu)"]
+        direction LR
+        step3 --> step4
+    end
+    subgraph Job1["ジョブ (Runner: mac)"]
+        direction LR
+        step1 --> step2
+    end
+  end
+  event[イベント] --> workflow
+```
+
+</div>
+</div>
+
 ---
 
-じゃあどうやって実現するの？
+# GitHub Actionsの知識(キーワード2/2)
+
+<div class="flex">
+<div class="basis-1/2 m-2 p-2">
+
+- アクション
+   - **よく使用されるジョブ**をまとめたもの
+      - キャッシュ
+      - パッケージマネージャーの設定
+      - gitのブランチ移動
+      - アーティファクトの設定
+   - [GitHub Marketplace](https://github.com/marketplace)にて探すことができる
+- ランナー
+   - ジョブが実行されるサーバー
+   - Ubuntu、Windows、macOSから選択
+   - セルフホストすることもできる
+   - [ランナーのスペック一覧](https://docs.github.com/ja/actions/writing-workflows/choosing-where-your-workflow-runs/choosing-the-runner-for-a-job#%E3%83%91%E3%83%96%E3%83%AA%E3%83%83%E3%82%AF-%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%81%AE%E6%A8%99%E6%BA%96%E3%81%AE-github-%E3%81%A7%E3%83%9B%E3%82%B9%E3%83%88%E3%81%95%E3%82%8C%E3%81%9F%E3%83%A9%E3%83%B3%E3%83%8A%E3%83%BC)
+
+</div>
+<div class="basis-1/2 m-2 p-2">
+
+```mermaid
+flowchart TD
+  subgraph workflow["ワークフロー (xxx.yaml)"]
+    direction LR
+    subgraph Job2["ジョブ (Runner: ubuntu)"]
+        direction LR
+        step3 --> step4
+    end
+    subgraph Job1["ジョブ (Runner: mac)"]
+        direction LR
+        step1 --> step2
+    end
+  end
+  event[イベント] --> workflow
+```
+
+</div>
+</div>
+
+
+---
+layout: two-cols
+---
 
 <style>
-p {
-  --uno: 'text-3xl';
+ul {
+   font-size: 0.7em;
+   li ul {
+      font-size: 0.8em;
+   }
 }
 </style>
----
-layout: two-cols-header
----
 
-# CI/CDのツール
+# 実際にどうやって書くの？
 
-::left::
+- `.github/workflows`ディレクトリを作成
+- `yaml`ファイルを作成し設定を記載する
 
-- コード管理サービスが提供するサービス
-   - GitHub Actions
-   - GitLab CI/CD
-   - Bitbucket Pipelines
+## 頑張ってかく
 
-- CI/CDのサービス(ソフトウェア)
-   - Circle CI
-   - Travis CI
-   - Jenkins
+- [ワークフロー構文](https://docs.github.com/ja/actions/writing-workflows/workflow-syntax-for-github-actions)を見ながら頑張って書く
+
+## テンプレートを使用する
+
+- [starter-workflows](https://github.com/actions/starter-workflows/tree/main)リポジトリに例がたくさん！
+- コピペして配置すればOK
 
 ::right::
 
-<div class="grid grid-cols-2 h-100 grid-items-center">
+```yaml
+name: Node.js CI
 
-<img src="./assets/image-gha.png" width="200px" />
-<img src="./assets/image-circleci.png" width="200px" />
-<img src="./assets/image-gitlabci.png" width="200px" />
-<img src="./assets/image-travisci.png" width="200px" />
-<img src="./assets/image-bitbucket.png" width="200px" />
-<img src="./assets/image-jenkins.png" width="200px" />
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
 
-</div>
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+```
+
+---
+hideInToc: true
+---
+
+# P5のワークフローを表すとこんな感じ
+
+```mermaid
+flowchart LR
+  subgraph workflow["ワークフロー(Node.js CI)"]
+    direction TB
+    subgraph Job1["ジョブ (ubuntu-latest) node ver18.x"]
+        direction LR
+        step1 --> step2 -->  step3 --> step4 --> step5
+    end
+    direction LR
+    subgraph Job2["ジョブ (ubuntu-latest) node ver20.x"]
+        direction LR
+        step11 --> step12 -->  step13 --> step14 --> step15
+    end
+    direction LR
+    subgraph Job3["ジョブ (ubuntu-latest) node ver22.x"]
+        direction LR
+        step21 --> step22 -->  step23 --> step24 --> step25
+    end
+  end
+  event[イベント] --> workflow
+  step1["uses: actions/checkout@4"]
+  step2["uses: actions/setup-node@v4"]
+  step3["run:  npm ci"]
+  step4["run:  npm run build --if-present"]
+  step5["run:  npm test"]
+
+  step11["uses: actions/checkout@4"]
+  step12["uses: actions/setup-node@v4"]
+  step13["run:  npm ci"]
+  step14["run:  npm run build --if-present"]
+  step15["run:  npm test"]
+
+  step21["uses: actions/checkout@4"]
+  step22["uses: actions/setup-node@v4"]
+  step23["run:  npm ci"]
+  step24["run:  npm run build --if-present"]
+  step25["run:  npm test"]
+```
 
 ---
 layout: image
 image: layouts/images/sky.jpeg
 ---
 
+<style>
+code {
+   color: red;
+}
+</style>
+
 # まとめ
 
-- 継続的インテグレーション（CI）
-   - **変更のたび**に自動でビルドとテストを行う手法
-- 継続デリバリー（CD）
-   - アプリケーションを<br>**いつでもデプロイできる**状態にすること
-- CI/CDを整備することで、コードが変更するたびに<br>**自動でビルドとテスト**を行い、<br>**品質の高いソフトウェア**を担保する！
-
----
-
-# 次回(予定)
-
-- GitHub Actionsについて
-  - 実際にどうやって定義するのか
+- **ワークフロー**の中に**ジョブ**があり、ジョブの中に**ステップ**がある
+- ジョブは**ランナー**が異なるため、**並列で動作**する
+- ステップで実行できるのは、**シェルスクリプト**か**アクション**
+- `.github/workflows`ディレクトリの中に`yaml`ファイルを作成して**配置するだけでOK！**
+   - たくさんテンプレート転がってます！
 
 
 <!-- ---
